@@ -1,0 +1,33 @@
+.card{
+height: 100px;
+width: 50%;
+background-color:#735bf2 ;
+color: white;
+border-radius: 10px;
+border: none;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 24px;
+}
+
+.card strong {
+font-size: 1em;
+}
+
+.card i {
+    cursor: pointer;
+}
+
+.card.checked strong {
+    text-decoration: line-through;
+  }
+
+  .card.checked small {
+    text-decoration: line-through;
+  }
+
+  .card.checked{
+    background-color:#f25b5b;
+  }

@@ -1,0 +1,24 @@
+.header{
+width: 50%;
+margin: 84px 0 24px;
+display: flex;
+
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 100%;
+}
+
+.trash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    cursor: pointer;
+}
+
+
+
