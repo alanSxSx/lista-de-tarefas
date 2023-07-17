@@ -9,6 +9,17 @@ function App() {
 	const [time, setTime] = useState('');
 	const [cards, setCards] = useState([]);
 
+	useEffect(() => {
+		fetch('http://localhost:3000/cards')
+			.then(response => response.json())
+			.then(data => {
+				setCards(data);
+			})
+			.catch(error => {
+				console.error('Erro ao recuperar os cards:', error);
+			});
+	}, []);
+
 	function handleNameChange(e) {
 		setName(e.target.value)
 	}
@@ -34,22 +45,22 @@ function App() {
 		fetch('http://localhost:3000/cards', {
 			method: 'POST',
 			headers: {
-			  'Content-Type': 'application/json'
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(newCard)
-		  })
+		})
 			.then(response => {
-			  if (response.ok) {
-				setCards(prevState => [...prevState, newCard])
-				console.log('Card adicionado com sucesso!');
-				setName('');
-				setTime('');
-			  } else {
-				console.error('Erro ao adicionar o card:', response.status);
-			  }
+				if (response.ok) {
+					setCards(prevState => [...prevState, newCard])
+					console.log('Card adicionado com sucesso!');
+					setName('');
+					setTime('');
+				} else {
+					console.error('Erro ao adicionar o card:', response.status);
+				}
 			})
 			.catch(error => {
-			  console.error('Erro ao adicionar o card:', error);
+				console.error('Erro ao adicionar o card:', error);
 			});
 
 		// setCards(prevState => [...prevState, newCard]);
@@ -67,13 +78,47 @@ function App() {
 	}
 
 	function handleTrash(index) {
-		const updatedCards = [...cards];
-		updatedCards.splice(index, 1); // Remove o card do array usando splice
-		setCards(updatedCards);
+		// const updatedCards = [...cards];
+		// updatedCards.splice(index, 1); // Remove o card do array usando splice
+		// setCards(updatedCards);
+
+		const cardId = cards[index].id; // Certifique-se de ter uma propriedade `id` única para cada card
+
+		fetch(`http://localhost:3000/cards/${cardId}`, {
+			method: 'DELETE'
+		})
+			.then(response => {
+				if (response.ok) {
+					console.log('Card deletado com sucesso!');
+					const updatedCards = [...cards];
+					updatedCards.splice(index, 1);
+					setCards(updatedCards);
+				} else {
+					console.error('Erro ao deletar o card:', response.status);
+				}
+			})
+			.catch(error => {
+				console.error('Erro ao deletar o card:', error);
+			});
+
 	}
 
 	function handleClearAll() {
-		setCards([]); // Define o array de cards como vazio
+
+		fetch('http://localhost:3000/cards', {
+			method: 'DELETE'
+		  })
+			.then(response => {
+			  if (response.ok) {
+				console.log('Todos os cards foram deletados com sucesso!');
+				setCards([]); // Define o array de cards como vazio
+			  } else {
+				console.error('Erro ao deletar os cards:', response.status);
+			  }
+			})
+			.catch(error => {
+			  console.error('Erro ao deletar os cards:', error);
+			});
 	}
 
 	// useEffect(() => {
