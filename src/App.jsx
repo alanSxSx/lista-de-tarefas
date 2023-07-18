@@ -10,15 +10,19 @@ function App() {
 	const [cards, setCards] = useState([]);
 
 	useEffect(() => {
+		fetchCards();
+	}, []);
+
+	function fetchCards() {
 		fetch('http://localhost:3000/cards')
-			.then(response => response.json())
-			.then(data => {
-				setCards(data);
+			.then((response) => response.json())
+			.then((data) => {
+				 setCards(data);
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error('Erro ao recuperar os cards:', error);
 			});
-	}, []);
+	}
 
 	function handleNameChange(e) {
 		setName(e.target.value)
@@ -40,27 +44,39 @@ function App() {
 			// 	minute:'2-digit',
 			// 	second:'2-digit',
 			// })
+			
 		};
+
 
 		fetch('http://localhost:3000/cards', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+			  'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(newCard)
-		})
+		  })
 			.then(response => {
-				if (response.ok) {
-					setCards(prevState => [...prevState, newCard])
-					console.log('Card adicionado com sucesso!');
-					setName('');
-					setTime('');
-				} else {
-					console.error('Erro ao adicionar o card:', response.status);
-				}
+			  if (response.ok) {
+				return response.json(); // Obtenha a resposta JSON do servidor
+			  } else {
+				throw new Error('Erro ao adicionar o card: ' + response.status);
+			  }
+			})
+			.then(data => {
+			  // O servidor retornou o card com o id atribuído
+			  const addedCard = {
+				id: data.id, // Obtenha o id do card da resposta do servidor
+				name: data.name,
+				time: data.time,
+				check: data.check
+			  };
+			  setCards(prevState => [...prevState, addedCard]);
+			  console.log('Card adicionado com sucesso!');
+			  setName('');
+			  setTime('');
 			})
 			.catch(error => {
-				console.error('Erro ao adicionar o card:', error);
+			  console.error('Erro ao adicionar o card:', error);
 			});
 
 		// setCards(prevState => [...prevState, newCard]);
@@ -85,7 +101,10 @@ function App() {
 		const cardId = cards[index].id; // Certifique-se de ter uma propriedade `id` única para cada card
 
 		fetch(`http://localhost:3000/cards/${cardId}`, {
-			method: 'DELETE'
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
 		})
 			.then(response => {
 				if (response.ok) {
@@ -93,6 +112,7 @@ function App() {
 					const updatedCards = [...cards];
 					updatedCards.splice(index, 1);
 					setCards(updatedCards);
+					fetchCards();
 				} else {
 					console.error('Erro ao deletar o card:', response.status);
 				}
@@ -101,23 +121,59 @@ function App() {
 				console.error('Erro ao deletar o card:', error);
 			});
 
+
+
+		// fetch(`http://localhost:3000/cards/${cardId}`, {
+		// 	method: 'DELETE'
+		// })
+		// 	.then(response => {
+		// 		if (response.ok) {
+		// 			console.log('Card deletado com sucesso!');
+		// 			const updatedCards = [...cards];
+		// 			updatedCards.splice(index, 1);
+		// 			setCards(updatedCards);
+		// 		} else {
+		// 			console.error('Erro ao deletar o card:', response.status);
+		// 		}
+		// 	})
+		// 	.catch(error => {
+		// 		console.error('Erro ao deletar o card:', error);
+		// 		console.log(cardId)
+		// 	});
+
+
+
 	}
+
+
 
 	function handleClearAll() {
 
-		fetch('http://localhost:3000/cards', {
-			method: 'DELETE'
-		  })
-			.then(response => {
-			  if (response.ok) {
-				console.log('Todos os cards foram deletados com sucesso!');
-				setCards([]); // Define o array de cards como vazio
-			  } else {
-				console.error('Erro ao deletar os cards:', response.status);
-			  }
+		const deleteRequests = cards.map(card =>
+			fetch(`http://localhost:3000/cards/${card.id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ ids: [card.id] }),
+			})
+		);
+
+		Promise.all(deleteRequests)
+			.then(responses => {
+				const allDeleted = responses.every(response => response.ok);
+				if (allDeleted) {
+					console.log('Registros excluídos com sucesso');
+					// Adicionar um pequeno atraso antes de atualizar o estado do cliente
+					setTimeout(() => {
+						setCards([]); // Atualizar o estado para refletir a exclusão
+					}, 300); // Ajustar o valor do atraso conforme necessário
+				} else {
+					console.log('Erro ao excluir registros');
+				}
 			})
 			.catch(error => {
-			  console.error('Erro ao deletar os cards:', error);
+				console.error(error);
 			});
 	}
 
@@ -135,7 +191,7 @@ function App() {
 			<button type='button' onClick={handleSubmit}>Adicionar</button>
 			{
 				cards.map((card, index) => <Card
-					key={card.time}
+					key={card.id}
 					name={card.name}
 					time={card.time}
 					check={card.check}

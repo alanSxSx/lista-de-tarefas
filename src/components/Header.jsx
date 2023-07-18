@@ -4,9 +4,7 @@ import './Header.css'
 
 export default function Header({handleClearAll}) {
 
-	function Teste() {
-		console.log('Teste Ativado')
-	}
+
 	return (
 		<>
 			<header className='header'>
@@ -14,7 +12,7 @@ export default function Header({handleClearAll}) {
 					<h1>Lista de Tarefas</h1>
 				</div>
 				<div className='trash'>
-					<i class="fa-solid fa-trash" onClick={handleClearAll}></i>
+					<i className="fa-solid fa-trash" onClick={handleClearAll}></i>
 				</div>
 			</header>
 		</>

@@ -1,28 +1,3 @@
 {
-  "cards": [
-    {
-      "name": "teste",
-      "time": "00:00",
-      "check": false,
-      "id": 2
-    },
-    {
-      "name": "teste1",
-      "time": "22:22",
-      "check": false,
-      "id": 3
-    },
-    {
-      "name": "teste2",
-      "time": "05:55",
-      "check": false,
-      "id": 4
-    },
-    {
-      "name": "teste3",
-      "time": "09:59",
-      "check": false,
-      "id": 5
-    }
-  ]
+  "cards": []
 }
