@@ -17,7 +17,7 @@ function App() {
 		fetch('http://localhost:3000/cards')
 			.then((response) => response.json())
 			.then((data) => {
-				 setCards(data);
+				setCards(data);
 			})
 			.catch((error) => {
 				console.error('Erro ao recuperar os cards:', error);
@@ -44,39 +44,39 @@ function App() {
 			// 	minute:'2-digit',
 			// 	second:'2-digit',
 			// })
-			
+
 		};
 
 
 		fetch('http://localhost:3000/cards', {
 			method: 'POST',
 			headers: {
-			  'Content-Type': 'application/json'
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(newCard)
-		  })
+		})
 			.then(response => {
-			  if (response.ok) {
-				return response.json(); // Obtenha a resposta JSON do servidor
-			  } else {
-				throw new Error('Erro ao adicionar o card: ' + response.status);
-			  }
+				if (response.ok) {
+					return response.json(); // Obtenha a resposta JSON do servidor
+				} else {
+					throw new Error('Erro ao adicionar o card: ' + response.status);
+				}
 			})
 			.then(data => {
-			  // O servidor retornou o card com o id atribuído
-			  const addedCard = {
-				id: data.id, // Obtenha o id do card da resposta do servidor
-				name: data.name,
-				time: data.time,
-				check: data.check
-			  };
-			  setCards(prevState => [...prevState, addedCard]);
-			  console.log('Card adicionado com sucesso!');
-			  setName('');
-			  setTime('');
+				// O servidor retornou o card com o id atribuído
+				const addedCard = {
+					id: data.id, // Obtenha o id do card da resposta do servidor
+					name: data.name,
+					time: data.time,
+					check: data.check
+				};
+				setCards(prevState => [...prevState, addedCard]);
+				console.log('Card adicionado com sucesso!');
+				setName('');
+				setTime('');
 			})
 			.catch(error => {
-			  console.error('Erro ao adicionar o card:', error);
+				console.error('Erro ao adicionar o card:', error);
 			});
 
 		// setCards(prevState => [...prevState, newCard]);
@@ -88,9 +88,35 @@ function App() {
 
 
 	function handleCheck(index) {
+		// const updatedCards = [...cards];
+		// updatedCards[index].check = !updatedCards[index].check;
+		// setCards(updatedCards);
+
 		const updatedCards = [...cards];
 		updatedCards[index].check = !updatedCards[index].check;
 		setCards(updatedCards);
+
+		const cardId = cards[index].id;
+
+		fetch(`http://localhost:3000/cards/${cardId}`, {
+			method: 'PATCH', // ou 'PUT', dependendo da sua API
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				check: updatedCards[index].check,
+			}),
+		})
+			.then(response => {
+				if (response.ok) {
+					console.log('Estado do card atualizado com sucesso!');
+				} else {
+					console.error('Erro ao atualizar o estado do card:', response.status);
+				}
+			})
+			.catch(error => {
+				console.error('Erro ao atualizar o estado do card:', error);
+			});
 	}
 
 	function handleTrash(index) {
