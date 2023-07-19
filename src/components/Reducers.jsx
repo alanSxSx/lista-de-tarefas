@@ -21,6 +21,11 @@ export const setCards = (cards) => ({
   payload: cards,
 });
 
+export const removeAllCards = (index) => ({
+  type: 'REMOVE_CARD',
+  index: index,
+});
+
 
 
 const reducer = (state = initialState, action) => {
@@ -49,6 +54,12 @@ function cardsReducer(state = initialState, action) {
       };
 
     case 'SET_CARDS':
+      return {
+        ...state,
+        cards: action.payload,
+      };
+
+      case 'REMOVE_ALL_CARDS':
       return {
         ...state,
         cards: action.payload,
