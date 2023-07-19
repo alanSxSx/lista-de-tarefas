@@ -1,34 +1,28 @@
 {
   "cards": [
     {
-      "name": "Fazer o café",
-      "time": "05:25",
-      "check": true,
+      "name": "teste1",
+      "time": "23:02",
+      "check": false,
       "id": 1
     },
     {
-      "name": "Lavar a Louça do Café",
-      "time": "05:45",
-      "check": true,
+      "name": "teste2",
+      "time": "03:25",
+      "check": false,
       "id": 2
     },
     {
-      "name": "Tomar Banho",
-      "time": "06:00",
+      "name": "teste3",
+      "time": "02:55",
       "check": false,
       "id": 3
     },
     {
-      "name": "Arrumar para trabalhar",
-      "time": "06:20",
+      "name": "teste2",
+      "time": "02:55",
       "check": false,
       "id": 4
-    },
-    {
-      "name": "Bater Ponto para trabalhar",
-      "time": "07:00",
-      "check": false,
-      "id": 5
     }
   ]
 }
