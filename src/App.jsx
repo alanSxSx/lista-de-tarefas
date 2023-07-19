@@ -4,7 +4,7 @@ import Card from './components/Card.jsx'
 import Header from './components/Header';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { addCard, removeCard,setCards } from './components/Reducers';
+import { addCard, removeCard,setCards,removeAllCards } from './components/Reducers';
 import { useDispatch,useSelector } from 'react-redux';
 
 
@@ -162,6 +162,7 @@ function App({  addCard }) {
 			.catch(error => {
 				console.error('Erro ao deletar o card:', error);
 			});
+	
 
 
 		// const cardId = cards[index].id; // Certifique-se de ter uma propriedade `id` única para cada card
@@ -258,24 +259,34 @@ function App({  addCard }) {
 
 
 	function handleClearAll() {
-		const deleteRequests = cards.map((card) =>
-			axios.delete(`http://localhost:3000/cards/${card.id}`)
-		);
 
-		Promise.all(deleteRequests)
-			.then((responses) => {
-				const allDeleted = responses.every((response) => response.status === 200);
-				if (allDeleted) {
-					console.log('Registros excluídos com sucesso');
-				} else {
-					console.log('Erro ao excluir registros');
-				}
-				fetchCards();
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+		const deleteRequests = cards.map((card) =>
+		fetch(`http://localhost:3000/cards/${card.id}`, {
+		  method: 'DELETE',
+		  headers: {
+			'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({ ids: [card.id] }),
+		})
+	  );
+	
+	  Promise.all(deleteRequests)
+		.then((responses) => {
+		  const allDeleted = responses.every((response) => response.ok);
+		  if (allDeleted) {
+			console.log('Registros excluídos com sucesso');
+			dispatch(removeAllCards()); // Dispatch da ação para remover todos os cards do estado do Redux
+			fetchCards(); // Buscar os cards atualizados
+		  } else {
+			console.log('Erro ao excluir registros');
+		  }
+		})
+		.catch((error) => {
+		  console.error(error);
+		});
 	}
+	
+	
 
 
 
@@ -316,6 +327,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
 	addCard: (card) => dispatch(addCard(card)),
 	removeCard: (index) => dispatch(removeCard(index)),
-});
+	removeAllCards: () => dispatch(removeAllCards()),
+  });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
