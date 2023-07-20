@@ -49,17 +49,21 @@ function cardsReducer(state = initialState, action) {
         cards: action.payload,
       };
 
-      case 'REMOVE_ALL_CARDS':
+    case 'REMOVE_ALL_CARDS':
       return {
         ...state,
         cards: [],
       };
 
-      case 'CHECK_CARD':
+    case 'CHECK_CARD':
+      const updatedCard = state.cards.map((card) =>
+        card.id === action.payload.id ? { ...card, check: action.payload.check } : card
+      );
       return {
         ...state,
-        cards: action.payload,
+        cards: updatedCard,
       };
+
 
     default:
       return state;
