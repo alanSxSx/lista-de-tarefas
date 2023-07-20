@@ -4,7 +4,7 @@ import Card from './components/Card.jsx'
 import Header from './components/Header';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { addCard, removeCard,setCards,removeAllCards } from './components/Reducers';
+import { addCard, removeCard,setCards,removeAllCards,checkCard } from './components/Reducers';
 import { useDispatch,useSelector } from 'react-redux';
 
 
@@ -113,6 +113,7 @@ function App({  addCard }) {
 
 		const updatedCards = [...cards];
 		updatedCards[index].check = !updatedCards[index].check;
+		// checkCard();
 		// setCards(updatedCards);
 
 		const cardId = cards[index].id;
@@ -129,6 +130,7 @@ function App({  addCard }) {
 			.then(response => {
 				if (response.ok) {
 					console.log('Estado do card atualizado com sucesso!');
+					dispatch(checkCard(updatedCards))
 				} else {
 					console.error('Erro ao atualizar o estado do card:', response.status);
 				}
