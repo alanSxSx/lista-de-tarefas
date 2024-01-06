@@ -32,7 +32,14 @@ function App({  addCard }) {
 			  time: card.time,
 			  check: card.check,
 			}));
-			dispatch(setCards(fetchedCards)); // Dispatch da ação para definir os cards no estado do Redux
+
+			const sortedCards = [...fetchedCards].sort((a, b) => {
+        const timeA = parseInt(a.time.split(':').join(''), 10);
+        const timeB = parseInt(b.time.split(':').join(''), 10);
+        return timeA - timeB;
+      });
+
+			dispatch(setCards(sortedCards)); // Dispatch da ação para definir os cards no estado do Redux
 		  })
 		  .catch((error) => {
 			console.error('Erro ao recuperar os cards:', error);
@@ -40,7 +47,7 @@ function App({  addCard }) {
 	  }
 
 
-	
+
 
 
 
@@ -90,6 +97,12 @@ function App({  addCard }) {
 					check: data.check
 				};
 				addCard(addedCard);
+				const sortedCards = [...cards, addedCard].sort((a, b) => {
+					const timeA = parseInt(a.time.split(':').join(''), 10);
+					const timeB = parseInt(b.time.split(':').join(''), 10);
+					return timeA - timeB;
+				});
+				dispatch(setCards(sortedCards));
 				console.log('Card adicionado com sucesso!');
 				setName('');
 				setTime('');
@@ -156,7 +169,7 @@ function App({  addCard }) {
 			.then(response => {
 				if (response.ok) {
 					console.log('Card deletado com sucesso!');
-					fetchCards()													
+					fetchCards()
 				} else {
 					console.error('Erro ao deletar o card:', response.status);
 				}
@@ -164,100 +177,9 @@ function App({  addCard }) {
 			.catch(error => {
 				console.error('Erro ao deletar o card:', error);
 			});
-	
-
-
-		// const cardId = cards[index].id; // Certifique-se de ter uma propriedade `id` única para cada card
-		// axios
-		// 	.delete(`http://localhost:3000/cards/${cardId}`)
-		// 	.then((response) => {
-		// 		if (response.status === 200) {
-		// 			console.log('Card deletado com sucesso!');
-		// 		} else {
-		// 			console.error('Erro ao deletar o card:', response.status);
-		// 		}
-		// 	})
-		// 	.catch((error) => {
-		// 		console.error('Erro ao deletar o card:', error);
-		// 	});
-
-
-		// fetch(`http://localhost:3000/cards/${cardId}`, {
-		// 	method: 'DELETE',
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 	},
-		// })
-		// 	.then(response => {
-		// 		if (response.ok) {
-		// 			console.log('Card deletado com sucesso!');
-		// 			const updatedCards = [...cards];
-		// 			updatedCards.splice(index, 1);
-		// 			setCards(updatedCards);
-		// 			fetchCards();
-		// 		} else {
-		// 			console.error('Erro ao deletar o card:', response.status);
-		// 		}
-		// 	})
-		// 	.catch(error => {
-		// 		console.error('Erro ao deletar o card:', error);
-		// 	});
-
-
-
-
-		// fetch(`http://localhost:3000/cards/${cardId}`, {
-		// 	method: 'DELETE'
-		// })
-		// 	.then(response => {
-		// 		if (response.ok) {
-		// 			console.log('Card deletado com sucesso!');
-		// 			const updatedCards = [...cards];
-		// 			updatedCards.splice(index, 1);
-		// 			setCards(updatedCards);
-		// 		} else {
-		// 			console.error('Erro ao deletar o card:', response.status);
-		// 		}
-		// 	})
-		// 	.catch(error => {
-		// 		console.error('Erro ao deletar o card:', error);
-		// 		console.log(cardId)
-		// 	});
-
-
 
 	}
 
-
-
-	// function handleClearAll() {
-
-	// 	const deleteRequests = cards.map(card =>
-	// 		fetch(`http://localhost:3000/cards/${card.id}`, {
-	// 			method: 'DELETE',
-	// 			headers: {
-	// 				'Content-Type': 'application/json',
-	// 			},
-	// 			body: JSON.stringify({ ids: [card.id] }),
-	// 		})
-	// 	);
-
-	// 	Promise.all(deleteRequests)
-	// 		.then(responses => {
-	// 			const allDeleted = responses.every(response => response.ok);
-	// 			if (allDeleted) {
-	// 				console.log('Registros excluídos com sucesso');
-	// 				// Adicionar um pequeno atraso antes de atualizar o estado do cliente
-	// 				setTimeout(() => {
-	// 					setCards([]); // Atualizar o estado para refletir a exclusão
-	// 				}, 300); // Ajustar o valor do atraso conforme necessário
-	// 			} else {
-	// 				console.log('Erro ao excluir registros');
-	// 			}
-	// 		})
-	// 		.catch(error => {
-	// 			console.error(error);
-	// 		});
 
 
 	function handleClearAll() {
@@ -271,7 +193,7 @@ function App({  addCard }) {
 		  body: JSON.stringify({ ids: [card.id] }),
 		})
 	  );
-	
+
 	  Promise.all(deleteRequests)
 		.then((responses) => {
 		  const allDeleted = responses.every((response) => response.ok);
@@ -287,8 +209,8 @@ function App({  addCard }) {
 		  console.error(error);
 		});
 	}
-	
-	
+
+
 
 
 

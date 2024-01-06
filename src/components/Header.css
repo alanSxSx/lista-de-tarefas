@@ -1,23 +1,27 @@
 .header{
-width: 50%;
-margin: 84px 0 24px;
-display: flex;
-
+width: 100%;
+display:flex;
+justify-content: center;
+align-items: center;
+padding-top: 5em;
+padding-bottom: 5em;
 }
 
 .title {
     display: flex;
     align-items: center;
     justify-content: end;
-    width: 100%;
+		margin-left: 60px;
+		font-size: x-large;
 }
 
 .trash {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 50%;
+		justify-content: end;
     cursor: pointer;
+		width: 60px;
+		font-size: x-large;
 }
 
 
